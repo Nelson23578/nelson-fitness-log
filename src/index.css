@@ -1,0 +1,358 @@
+/* index.css */
+
+/* 引入 Google Fonts (Poppins) */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+/* --------------------
+   全域設定
+-------------------- */
+body {
+  background: linear-gradient(135deg, #BBFFFF, #E0FFF8);
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* --------------------
+   容器 Container
+-------------------- */
+.container {
+  background-color: #FFFFFF;
+  max-width: 700px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* --------------------
+   分頁導覽 Tabs
+-------------------- */
+.tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1.5rem;
+}
+
+.tabs button {
+  flex: 1;
+  margin: 0 0.25rem;
+  padding: 0.75rem;
+  background-color: #BBFFFF;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.tabs button:hover {
+  background-color: #A2ECEC;
+  transform: scale(1.03);
+}
+
+.tabs button.active {
+  background-color: #99E0E6;
+  transform: scale(1.05);
+}
+
+/* --------------------
+   分頁內容動畫（淡入）
+-------------------- */
+.tab-content {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --------------------
+   標題 Headings
+-------------------- */
+h1, h2, h3 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+/* --------------------
+   表單與按鈕
+-------------------- */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: 600;
+}
+
+input[type="date"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  border: 2px solid #BBFFFF;
+  border-radius: 6px;
+  background-color: #FFFFFF;
+  font-size: 1rem;
+  transition: 
+    border-color 0.3s ease, 
+    box-shadow 0.3s ease,
+    transform 0.2s ease;
+  box-sizing: border-box;
+}
+
+input[type="date"]:hover,
+input[type="number"]:hover,
+select:hover {
+  box-shadow: 0 2px 8px rgba(170, 255, 255, 0.15);
+  transform: scale(1.01);
+}
+
+input[type="date"]:focus,
+input[type="number"]:focus,
+select:focus {
+  border-color: #A2ECEC;
+  box-shadow: 0 0 5px rgba(187, 255, 255, 0.6);
+  outline: none;
+}
+
+button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #BBFFFF;
+  color: #333;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: #A2ECEC;
+  transform: scale(1.03);
+}
+
+/* --------------------
+   記錄區 (今日紀錄、歷史紀錄)
+-------------------- */
+.records-wrapper {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border: 2px solid #BBFFFF;
+  border-radius: 8px;
+  background-color: #FAFFFF;
+}
+
+.records-wrapper h2 {
+  margin-top: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.record-item {
+  background-color: #FFFFFF;
+  border: 2px solid #BBFFFF;
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.record-item .info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-record {
+  background-color: #FFFFFF;
+  border: 2px solid #BBFFFF;
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.history-record .info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 刪除按鈕 */
+.delete-button {
+  background: none;
+  border: none;
+  color: #FF6B6B;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.delete-button:hover {
+  color: #FF3B3B;
+  transform: scale(1.1);
+}
+
+/* --------------------
+   分析圖表區 (Chart)
+-------------------- */
+.chart-section {
+  margin-bottom: 2rem;
+}
+
+.analysis {
+  margin-bottom: 1rem;
+}
+
+/* 分析子分頁按鈕 */
+.analysis-tabs {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1rem;
+}
+
+.analysis-tabs button {
+  flex: 1;
+  margin: 0 0.25rem;
+  padding: 0.5rem;
+  background-color: #BBFFFF;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.analysis-tabs button.active {
+  background-color: #99E0E6;
+  transform: scale(1.05);
+}
+
+/* --------------------
+   日曆樣式 (單月健身紀錄)
+-------------------- */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.5rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.calendar-day {
+  background-color: #FFFFFF;
+  border: 2px solid #BBFFFF;
+  border-radius: 6px;
+  padding: 0.5rem 0;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.calendar-day.marked {
+  background-color: #99E0E6;
+  color: #FFFFFF;
+}
+
+.calendar-day:hover {
+  background-color: #A2ECEC;
+  color: #FFFFFF;
+}
+
+/* --------------------
+   編輯動作管理
+-------------------- */
+.edit-section {
+  margin-bottom: 2rem;
+}
+
+/* 分組色塊 (不同部位) */
+.edit-part-group {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.edit-part-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.edit-item-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.edit-input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #BBFFFF;
+  border-radius: 4px;
+  margin-right: 0.5rem;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.edit-input:hover {
+  box-shadow: 0 2px 8px rgba(170, 255, 255, 0.15);
+  transform: scale(1.01);
+}
+
+.edit-input:focus {
+  border-color: #A2ECEC;
+  outline: none;
+  box-shadow: 0 0 5px rgba(187, 255, 255, 0.6);
+}
+
+/* 報表預覽區 (隱藏於畫面外) */
+#report {
+  position: absolute;
+  left: -9999px;
+  width: 600px;
+  background-color: #FFFFFF;
+  padding: 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* --------------------
+   響應式 (手機版)
+-------------------- */
+@media (max-width: 600px) {
+  .container {
+    margin: 1rem;
+    padding: 1rem;
+  }
+  h1 {
+    font-size: 1.5rem;
+  }
+  input[type="date"],
+  input[type="number"],
+  select,
+  .edit-input {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+  button {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+  .tabs button,
+  .analysis-tabs button {
+    padding: 0.5rem;
+  }
+}
