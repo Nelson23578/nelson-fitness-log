@@ -1,0 +1,17 @@
+{
+  "files": {
+    "main.css": "/nelson-fitness-log/static/css/main.003fce48.css",
+    "main.js": "/nelson-fitness-log/static/js/main.89a097e0.js",
+    "static/js/977.68b8beee.chunk.js": "/nelson-fitness-log/static/js/977.68b8beee.chunk.js",
+    "static/js/732.97cf0cd2.chunk.js": "/nelson-fitness-log/static/js/732.97cf0cd2.chunk.js",
+    "index.html": "/nelson-fitness-log/index.html",
+    "main.003fce48.css.map": "/nelson-fitness-log/static/css/main.003fce48.css.map",
+    "main.89a097e0.js.map": "/nelson-fitness-log/static/js/main.89a097e0.js.map",
+    "977.68b8beee.chunk.js.map": "/nelson-fitness-log/static/js/977.68b8beee.chunk.js.map",
+    "732.97cf0cd2.chunk.js.map": "/nelson-fitness-log/static/js/732.97cf0cd2.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.003fce48.css",
+    "static/js/main.89a097e0.js"
+  ]
+}
