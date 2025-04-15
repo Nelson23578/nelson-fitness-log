@@ -41,7 +41,6 @@ const firebaseConfig = {
   appId: "1:102978622006:web:2e234ee33bd3ffad097e97",
   measurementId: "G-0X697D6K2F"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -51,7 +50,7 @@ export default function FitnessLog() {
   // 主分頁： "today"、"history"、"analysis"、"edit"
   const [activeTab, setActiveTab] = useState("today");
 
-  /* ===== 當日健身記錄 ===== */
+  /* ===== 當日健身記錄狀態 ===== */
   const [date, setDate] = useState(today);
   const [part, setPart] = useState('');
   const [action, setAction] = useState('');
@@ -70,13 +69,13 @@ export default function FitnessLog() {
   });
   const [todayReport, setTodayReport] = useState(null);
 
-  /* ===== 歷史紀錄查詢 ===== */
+  /* ===== 歷史紀錄查詢狀態 ===== */
   const [historyStartDate, setHistoryStartDate] = useState(today);
   const [historyEndDate, setHistoryEndDate] = useState(today);
   const [historyPart, setHistoryPart] = useState("");
   const [historyData, setHistoryData] = useState([]);
 
-  /* ===== 健身紀錄分析 ===== */
+  /* ===== 健身紀錄分析狀態 ===== */
   const [analysisSubTab, setAnalysisSubTab] = useState("weight");
   // 動作重量分析
   const [analysisAction, setAnalysisAction] = useState('');
@@ -87,23 +86,21 @@ export default function FitnessLog() {
   const [calendarMonth, setCalendarMonth] = useState(today.substring(0,7));
   const [calendarData, setCalendarData] = useState({});
   const [selectedDayData, setSelectedDayData] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null); // 新增：用以標示當前選取日
   const [calendarDisplayMode, setCalendarDisplayMode] = useState("icon");
   // 部位總組數
   const [setsParts, setSetsParts] = useState([]);
   const [setsPeriod, setSetsPeriod] = useState("7");
   const [setsChartData, setSetsChartData] = useState(null);
 
-  /* ===== 資料庫中的部位->動作對照 ===== */
-  const [dbActions, setDbActions] = useState({}); 
-  // { part: [動作, ...], ... }
-
-  /* ===== 編輯動作管理 ===== */
+  /* ===== 動作管理 & DB Actions ===== */
+  const [dbActions, setDbActions] = useState({});
   const [actionsList, setActionsList] = useState([]);
   const [deletedActionIds, setDeletedActionIds] = useState([]);
   const [newActionPart, setNewActionPart] = useState('');
   const [newActionName, setNewActionName] = useState('');
 
-  // 自訂的部位顯示順序與色塊
+  /* ===== 部位順序 & 顏色設定 (同編輯介面) ===== */
   const partOrder = [
     "胸部訓練",
     "背部訓練",
@@ -123,7 +120,7 @@ export default function FitnessLog() {
     "核心訓練": "#E1FFFF",
   };
 
-  // 初始化：讀取 actions
+  // 初始化讀取 actions
   const fetchAllActionsFromDB = async () => {
     try {
       const snapshot = await getDocs(collection(db, 'actions'));
@@ -148,10 +145,9 @@ export default function FitnessLog() {
   }, []);
 
   // ====================
-  // 當日健身記錄功能區
+  // 當日健身記錄功能
   // ====================
   const addRecord = () => {
-    // 若有未填欄位，跳出提醒
     if (!part || !action || !weight || !reps || !sets) {
       alert("請確保所有欄位都已輸入！");
       return;
@@ -189,12 +185,10 @@ export default function FitnessLog() {
   };
 
   const finishWorkout = async () => {
-    // 若今日紀錄為空，提示
     if (records.length === 0) {
       alert("尚未新增任何今日紀錄，無法送出！");
       return;
     }
-
     if (!window.confirm("確定要送出今天的記錄嗎？送出後將無法修改！")) return;
     const endTime = new Date();
     const duration = startTime ? Math.round((endTime - startTime) / 1000) : 0;
@@ -210,7 +204,6 @@ export default function FitnessLog() {
     }
 
     setTodayReport({ date, records: [...records], duration });
-    // 清除
     setRecords([]);
     setStartTime(null);
     setPart('');
@@ -223,7 +216,6 @@ export default function FitnessLog() {
     localStorage.removeItem('todayDate');
   };
 
-  // 匯出文字報表
   const exportTextReport = () => {
     if (!todayReport) return;
     const { date, records, duration } = todayReport;
@@ -245,7 +237,7 @@ export default function FitnessLog() {
       for (const act in grouped[pt]) {
         lines.push(`  └ 動作：${act}`);
         grouped[pt][act].forEach((item, idx) => {
-          lines.push(`      - ${idx + 1}. 重量: ${item.weight}kg, 次數: ${item.reps}, 組數: ${item.sets}`);
+          lines.push(`      - ${idx+1}. 重量: ${item.weight}kg, 次數: ${item.reps}, 組數: ${item.sets}`);
         });
       }
       lines.push('');
@@ -263,12 +255,10 @@ export default function FitnessLog() {
     URL.revokeObjectURL(url);
   };
 
-  // 匯出 PDF
   const exportPDF = async () => {
     if (!todayReport) return;
     const reportElement = document.getElementById("report");
     if (!reportElement) return;
-
     const canvas = await html2canvas(reportElement);
     const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF('p', 'pt', 'a4');
@@ -277,7 +267,6 @@ export default function FitnessLog() {
     const imgProps = pdf.getImageProperties(imgData);
     const imgWidth = pageWidth - margin * 2;
     const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-
     pdf.addImage(imgData, 'PNG', margin, margin, imgWidth, imgHeight);
     pdf.save(`健身報表_${todayReport.date}.pdf`);
   };
@@ -347,7 +336,7 @@ export default function FitnessLog() {
     }
   };
 
-  // 部位總組數
+  // 部位總組數查詢
   const querySets = async () => {
     try {
       const snapshot = await getDocs(collection(db, 'fitnessRecords'));
@@ -432,35 +421,12 @@ export default function FitnessLog() {
     }
   }
 
-  // 編輯動作管理：依部位排序
-  function getGroupedActions() {
-    const groupByPart = {};
-    for (const act of actionsList) {
-      const p = act.part;
-      if (!groupByPart[p]) groupByPart[p] = [];
-      groupByPart[p].push(act);
-    }
-    const result = [];
-    for (const p of partOrder) {
-      if (groupByPart[p] && groupByPart[p].length > 0) {
-        result.push({ part: p, items: groupByPart[p] });
-      }
-    }
-    // 若有其他部位
-    for (const p in groupByPart) {
-      if (!partOrder.includes(p)) {
-        result.push({ part: p, items: groupByPart[p] });
-      }
-    }
-    return result;
-  }
-
+  // 編輯動作管理：依部位排序 + 顏色
   const handleEditActionName = (index, newName) => {
     const updated = [...actionsList];
     updated[index].action = newName;
     setActionsList(updated);
   };
-
   const deleteActionItem = (index) => {
     const item = actionsList[index];
     if (item.id) {
@@ -469,17 +435,14 @@ export default function FitnessLog() {
     const updated = actionsList.filter((_, i) => i !== index);
     setActionsList(updated);
   };
-
   const saveActionsChanges = async () => {
     try {
-      // 更新已修改
       for (const item of actionsList) {
         await updateDoc(doc(db, 'actions', item.id), {
           part: item.part,
           action: item.action
         });
       }
-      // 刪除
       for (const id of deletedActionIds) {
         await deleteDoc(doc(db, 'actions', id));
       }
@@ -491,7 +454,6 @@ export default function FitnessLog() {
       alert("更新動作失敗");
     }
   };
-
   const addNewAction = async () => {
     if (!newActionPart || !newActionName) {
       alert("請輸入完整資訊");
@@ -513,7 +475,7 @@ export default function FitnessLog() {
     <div className="container">
       <h1>Nelson 的健身紀錄</h1>
 
-      {/* 主分頁導覽 */}
+      {/* 分頁導覽 */}
       <div className="tabs">
         <button 
           className={activeTab === "today" ? "active" : ""} 
@@ -605,24 +567,32 @@ export default function FitnessLog() {
             <button onClick={addRecord}>新增紀錄</button>
           </div>
 
-          {/* 獨立框框呈現「今日紀錄」 */}
+          {/* 今日紀錄 - 不同部位背景顏色 */}
           <div className="records-wrapper">
             <h2>今日紀錄</h2>
-            {records.map((r, i) => (
-              <div className="record-item" key={i}>
-                <div className="info">
-                  <div>
-                    {r.part} - {r.action} | {r.weight}kg x {r.reps}次 x {r.sets}組
+            {records.map((r, i) => {
+              // 依部位套用背景色
+              const bgColor = partColors[r.part] || '#FAFFFF';
+              return (
+                <div
+                  className="record-item"
+                  key={i}
+                  style={{ backgroundColor: bgColor }}
+                >
+                  <div className="info">
+                    <div>
+                      {r.part} - {r.action} | {r.weight}kg x {r.reps}次 x {r.sets}組
+                    </div>
+                    <button 
+                      className="delete-button" 
+                      onClick={() => deleteRecord(i)}
+                    >
+                      🗑️
+                    </button>
                   </div>
-                  <button 
-                    className="delete-button" 
-                    onClick={() => deleteRecord(i)}
-                  >
-                    🗑️
-                  </button>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <button onClick={finishWorkout}>完成紀錄</button>
@@ -685,15 +655,27 @@ export default function FitnessLog() {
                         className="delete-button"
                         onClick={async () => {
                           try {
+                            // 只刪除當日紀錄中的第 j 筆，若刪除完後無紀錄，便直接刪除文件
                             const snapshot = await getDocs(collection(db, 'fitnessRecords'));
-                            const toDelete = snapshot.docs.find(doc => doc.data().date === item.date);
-                            if (toDelete) {
-                              await deleteDoc(toDelete.ref);
+                            const foundDoc = snapshot.docs.find(d => d.data().date === item.date);
+                            if (foundDoc) {
+                              const docRef = foundDoc.ref;
+                              const docData = foundDoc.data();
+                              const updatedRecords = docData.records.filter((_, recordIndex) => recordIndex !== j);
+
+                              if (updatedRecords.length === 0) {
+                                // 若沒有剩餘紀錄，直接刪除此份文件
+                                await deleteDoc(docRef);
+                              } else {
+                                // 否則僅更新該文件的 records
+                                await updateDoc(docRef, { records: updatedRecords });
+                              }
                               alert('刪除成功');
                               queryHistory();
                             }
                           } catch (err) {
                             console.error('刪除失敗', err);
+                            alert('刪除失敗');
                           }
                         }}
                       >
@@ -735,7 +717,7 @@ export default function FitnessLog() {
             </button>
           </div>
 
-          {/* 動作重量分析 */}
+          {/* 1. 動作重量分析 */}
           {analysisSubTab === "weight" && (
             <>
               <div className="analysis form-group">
@@ -774,7 +756,7 @@ export default function FitnessLog() {
             </>
           )}
 
-          {/* 單月健身紀錄 (日曆) */}
+          {/* 2. 單月健身紀錄 (日曆) */}
           {analysisSubTab === "calendar" && (
             <>
               <div className="analysis form-group">
@@ -796,12 +778,17 @@ export default function FitnessLog() {
                 {[...Array(31)].map((_, i) => {
                   const d = `${calendarMonth}-${(i + 1).toString().padStart(2, '0')}`;
                   const calInfo = calendarData[d];
+                  const isToday = (d === today);
+                  const isSelected = (d === selectedDate);
+
                   return (
                     <div 
                       key={d}
-                      className={`calendar-day ${calInfo ? 'marked' : ''}`}
+                      className={`calendar-day ${calInfo ? 'marked' : ''} ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}`}
+                      title={calInfo ? calInfo.parts.join(', ') : ''}
                       onClick={async () => {
                         try {
+                          setSelectedDate(d);
                           const snapshot = await getDocs(collection(db, 'fitnessRecords'));
                           const found = snapshot.docs.find(doc => doc.data().date === d);
                           setSelectedDayData(found ? found.data() : null);
@@ -814,9 +801,26 @@ export default function FitnessLog() {
                       {calInfo && (
                         calendarDisplayMode === "icon"
                           ? " 🏋️"
-                          : <div style={{ fontSize: "0.7rem", marginTop: "4px" }}>
-                              {calInfo.parts.join(', ')}
+                          : (
+                            <div style={{ 
+                              display: 'flex', 
+                              flexDirection: 'column', 
+                              alignItems: 'center', 
+                              marginTop: 4 
+                            }}>
+                              {calInfo.parts.map((pName, idx) => (
+                                <span
+                                  key={idx}
+                                  className="calendar-part-tag"
+                                  style={{
+                                    backgroundColor: partColors[pName] || '#eee'
+                                  }}
+                                >
+                                  {pName}
+                                </span>
+                              ))}
                             </div>
+                          )
                       )}
                     </div>
                   );
@@ -838,7 +842,7 @@ export default function FitnessLog() {
             </>
           )}
 
-          {/* 部位總組數 */}
+          {/* 3. 部位總組數 */}
           {analysisSubTab === "sets" && (
             <>
               <div className="analysis form-group">
@@ -862,7 +866,10 @@ export default function FitnessLog() {
                   ))}
                 </select>
                 <label>選擇時間區間：</label>
-                <select value={setsPeriod} onChange={(e) => setSetsPeriod(e.target.value)}>
+                <select 
+                  value={setsPeriod} 
+                  onChange={(e) => setSetsPeriod(e.target.value)}
+                >
                   <option value="7">近一周</option>
                   <option value="30">近一個月</option>
                   <option value="90">近三個月</option>
@@ -905,20 +912,20 @@ export default function FitnessLog() {
               }
 
               // 依 partOrder 排序
-              const sortedGroups = [];
+              const sorted = [];
               for (const p of partOrder) {
                 if (groupByPart[p] && groupByPart[p].length > 0) {
-                  sortedGroups.push({ part: p, items: groupByPart[p] });
+                  sorted.push({ part: p, items: groupByPart[p] });
                 }
               }
-              // 其他部位
+              // 其他未列在 partOrder 的部位
               for (const p in groupByPart) {
                 if (!partOrder.includes(p)) {
-                  sortedGroups.push({ part: p, items: groupByPart[p] });
+                  sorted.push({ part: p, items: groupByPart[p] });
                 }
               }
 
-              return sortedGroups.map(group => (
+              return sorted.map((group) => (
                 <div 
                   key={group.part} 
                   className="edit-part-group"

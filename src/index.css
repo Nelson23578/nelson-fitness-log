@@ -164,7 +164,7 @@ button:hover {
 }
 
 .record-item {
-  background-color: #FFFFFF;
+  /* 移除預設背景，由 inline style 動態控制 */
   border: 2px solid #BBFFFF;
   border-radius: 6px;
   padding: 0.75rem;
@@ -177,6 +177,7 @@ button:hover {
   align-items: center;
 }
 
+/* 歷史紀錄 */
 .history-record {
   background-color: #FFFFFF;
   border: 2px solid #BBFFFF;
@@ -259,17 +260,33 @@ button:hover {
   border-radius: 6px;
   padding: 0.5rem 0;
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
 }
 
 .calendar-day.marked {
   background-color: #99E0E6;
-  color: #FFFFFF;
+  color: #090909;
 }
 
-.calendar-day:hover {
-  background-color: #A2ECEC;
-  color: #FFFFFF;
+.calendar-day.today {
+  border: 2px solid #1976D2;
+  box-shadow: 0 0 6px rgba(25, 118, 210, 0.5);
+  font-weight: bold;
+}
+
+.calendar-day.selected {
+  border: 2px solid #FF9F1C;
+  box-shadow: 0 0 6px rgba(255, 159, 28, 0.5);
+}
+
+/* 部位標籤 (Tag) */
+.calendar-part-tag {
+  border-radius: 12px;
+  padding: 2px 6px;
+  margin: 2px 0;
+  font-size: 0.65rem;
+  white-space: nowrap;
 }
 
 /* --------------------
@@ -354,5 +371,16 @@ button:hover {
   .tabs button,
   .analysis-tabs button {
     padding: 0.5rem;
+  }
+
+  .calendar-grid {
+    font-size: 0.75rem;
+  }
+  .calendar-day {
+    padding: 0.35rem 0;
+  }
+  .calendar-part-tag {
+    font-size: 0.6rem;
+    padding: 1px 5px;
   }
 }
